@@ -1,10 +1,8 @@
 package br.com.cooperativa.votacao.voto;
 
-import org.springframework.http.HttpStatus;
-import org.springframework.web.bind.annotation.ResponseStatus;
+import br.com.cooperativa.votacao.comum.excecao.ConflitoException;
 
-@ResponseStatus(HttpStatus.CONFLICT)
-public class VotoDuplicadoException extends RuntimeException {
+public class VotoDuplicadoException extends ConflitoException {
 
     public VotoDuplicadoException(Long pautaId, String associadoId) {
         super("Associado " + associadoId + " já votou na pauta " + pautaId);

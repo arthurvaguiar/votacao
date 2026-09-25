@@ -46,6 +46,7 @@ class PautaControllerTest {
                         .content("""
                                 {"titulo": ""}
                                 """))
+                .andExpect(jsonPath("$.erros[0].campo").value("titulo"))
                 .andExpect(status().isBadRequest());
     }
 

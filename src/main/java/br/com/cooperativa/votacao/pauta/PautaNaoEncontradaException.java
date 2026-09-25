@@ -1,10 +1,8 @@
 package br.com.cooperativa.votacao.pauta;
 
-import org.springframework.http.HttpStatus;
-import org.springframework.web.bind.annotation.ResponseStatus;
+import br.com.cooperativa.votacao.comum.excecao.RecursoNaoEncontradoException;
 
-@ResponseStatus(HttpStatus.NOT_FOUND)
-public class PautaNaoEncontradaException extends RuntimeException {
+public class PautaNaoEncontradaException extends RecursoNaoEncontradoException {
 
     public PautaNaoEncontradaException(Long id) {
         super("Pauta não encontrada: " + id);

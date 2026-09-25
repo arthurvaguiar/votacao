@@ -1,11 +1,10 @@
 package br.com.cooperativa.votacao.sessao;
 
-import org.springframework.http.HttpStatus;
-import org.springframework.web.bind.annotation.ResponseStatus;
+import br.com.cooperativa.votacao.comum.excecao.RecursoNaoEncontradoException;
 
-@ResponseStatus(HttpStatus.NOT_FOUND)
-public class SessaoNaoEncontradaException extends RuntimeException {
+public class SessaoNaoEncontradaException extends RecursoNaoEncontradoException {
 
     public SessaoNaoEncontradaException(Long pautaId) {
-        super("Sessão de votação não encontrada para a pauta: " + pautaId);    }
+        super("Sessão de votação não encontrada para a pauta: " + pautaId);
+    }
 }
