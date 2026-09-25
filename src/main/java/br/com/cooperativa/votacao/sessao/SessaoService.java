@@ -42,4 +42,10 @@ public class SessaoService {
         log.info("Sessão aberta: pautaId={}, fechamento={}", pautaId, sessao.getFechamento());
         return sessao;
     }
+
+    @Transactional(readOnly = true)
+    public Sessao buscarPorPauta(Long pautaId) {
+        return repository.findByPautaId(pautaId)
+                .orElseThrow(() -> new SessaoNaoEncontradaException(pautaId));
+    }
 }
