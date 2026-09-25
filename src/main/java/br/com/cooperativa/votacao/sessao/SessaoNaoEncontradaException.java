@@ -7,6 +7,5 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 public class SessaoNaoEncontradaException extends RuntimeException {
 
     public SessaoNaoEncontradaException(Long pautaId) {
-        super("Nenhuma sessão de votação aberta para a pauta: " + pautaId);
-    }
+        super("Sessão de votação não encontrada para a pauta: " + pautaId);    }
 }

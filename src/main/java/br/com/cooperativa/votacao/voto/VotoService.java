@@ -10,6 +10,8 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.Clock;
 import java.time.Instant;
+import java.util.EnumMap;
+import java.util.Map;
 
 @Service
 public class VotoService {
@@ -46,5 +48,16 @@ public class VotoService {
             // Dois votos simultâneos do mesmo associado: a constraint do banco barra o segundo
             throw new VotoDuplicadoException(pautaId, associadoId);
         }
+    }
+
+    @Transactional(readOnly = true)
+    public Map<OpcaoVoto, Long> contarVotos(Long pautaId) {
+        var contagem = new EnumMap<OpcaoVoto, Long>(OpcaoVoto.class);
+        for (var opcao : OpcaoVoto.values()) {
+            contagem.put(opcao, 0L);
+        }
+        repository.contarPorOpcao(pautaId)
+                .forEach(c -> contagem.put(c.opcao(), c.total()));
+        return contagem;
     }
 }
