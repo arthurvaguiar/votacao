@@ -40,6 +40,11 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
                 "Ocorreu um erro inesperado. Tente novamente mais tarde.");
     }
 
+    @ExceptionHandler(IntegracaoIndisponivelException.class)
+    public ProblemDetail tratarIntegracaoIndisponivel(IntegracaoIndisponivelException ex) {
+        return erroDeNegocio(HttpStatus.SERVICE_UNAVAILABLE, "Serviço indisponível", ex);
+    }
+
     @Override
     protected ResponseEntity<Object> handleMethodArgumentNotValid(MethodArgumentNotValidException ex,
                                                                   HttpHeaders headers,

@@ -1,5 +1,7 @@
 package br.com.cooperativa.votacao.voto;
 
+import br.com.cooperativa.votacao.associado.AssociadoNaoPodeVotarException;
+import br.com.cooperativa.votacao.associado.ValidadorAssociado;
 import br.com.cooperativa.votacao.pauta.Pauta;
 import br.com.cooperativa.votacao.sessao.Sessao;
 import br.com.cooperativa.votacao.sessao.SessaoEncerradaException;
@@ -11,9 +13,13 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.dao.DataIntegrityViolationException;
 
-import java.time.*;
+import java.time.Clock;
+import java.time.Duration;
+import java.time.Instant;
+import java.time.ZoneOffset;
 
-import static org.assertj.core.api.Assertions.*;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
@@ -29,15 +35,38 @@ class VotoServiceTest {
     @Mock
     private SessaoService sessaoService;
 
+    @Mock
+    private ValidadorAssociado validadorAssociado;
+
     private VotoService service;
 
     @BeforeEach
     void setUp() {
-        service = new VotoService(repository, sessaoService, Clock.fixed(AGORA, ZoneOffset.UTC));
+        service = new VotoService(repository, sessaoService, validadorAssociado, Clock.fixed(AGORA, ZoneOffset.UTC));
     }
 
     private Sessao sessaoComDuracao(Duration duracao) {
         return new Sessao(new Pauta("P", null), ABERTURA, duracao);
+    }
+
+    @Test
+    void naoDeveRegistrarQuandoAssociadoNaoPodeVotar() {
+        when(sessaoService.buscarPorPauta(1L)).thenReturn(sessaoComDuracao(Duration.ofMinutes(1)));
+        doThrow(new AssociadoNaoPodeVotarException()).when(validadorAssociado).validarPodeVotar("assoc-1");
+
+        assertThatThrownBy(() -> service.registrar(1L, "assoc-1", OpcaoVoto.SIM))
+                .isInstanceOf(AssociadoNaoPodeVotarException.class);
+        verify(repository, never()).saveAndFlush(any());
+    }
+
+    @Test
+    void naoDeveConsultarServicoExternoQuandoVotoDuplicado() {
+        when(sessaoService.buscarPorPauta(1L)).thenReturn(sessaoComDuracao(Duration.ofMinutes(1)));
+        when(repository.existsByPautaIdAndAssociadoId(1L, "assoc-1")).thenReturn(true);
+
+        assertThatThrownBy(() -> service.registrar(1L, "assoc-1", OpcaoVoto.SIM))
+                .isInstanceOf(VotoDuplicadoException.class);
+        verifyNoInteractions(validadorAssociado);
     }
 
     @Test

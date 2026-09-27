@@ -1,5 +1,7 @@
 package br.com.cooperativa.votacao.voto;
 
+import br.com.cooperativa.votacao.associado.Cpf;
+import br.com.cooperativa.votacao.associado.ValidadorAssociado;
 import br.com.cooperativa.votacao.sessao.SessaoEncerradaException;
 import br.com.cooperativa.votacao.sessao.SessaoService;
 import org.slf4j.Logger;
@@ -20,15 +22,17 @@ public class VotoService {
 
     private final VotoRepository repository;
     private final SessaoService sessaoService;
+    private final ValidadorAssociado validadorAssociado;
+
     private final Clock clock;
 
-    public VotoService(VotoRepository repository, SessaoService sessaoService, Clock clock) {
+    public VotoService(VotoRepository repository, SessaoService sessaoService, ValidadorAssociado validadorAssociado, Clock clock) {
         this.repository = repository;
         this.sessaoService = sessaoService;
+        this.validadorAssociado = validadorAssociado;
         this.clock = clock;
     }
 
-    @Transactional
     public Voto registrar(Long pautaId, String associadoId, OpcaoVoto opcao) {
         var sessao = sessaoService.buscarPorPauta(pautaId);
         var agora = Instant.now(clock);
@@ -40,12 +44,13 @@ public class VotoService {
             throw new VotoDuplicadoException(pautaId, associadoId);
         }
 
+        validadorAssociado.validarPodeVotar(associadoId);
+
         try {
             var voto = repository.saveAndFlush(new Voto(pautaId, associadoId, opcao, agora));
-            log.info("Voto registrado: pautaId={}, associadoId={}", pautaId, associadoId);
+            log.info("Voto registrado: pautaId={}, associado={}", pautaId, Cpf.mascarar(associadoId));
             return voto;
         } catch (DataIntegrityViolationException e) {
-            // Dois votos simultâneos do mesmo associado: a constraint do banco barra o segundo
             throw new VotoDuplicadoException(pautaId, associadoId);
         }
     }

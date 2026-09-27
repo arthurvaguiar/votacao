@@ -97,7 +97,7 @@ public class TelaService {
         var pauta = pautaService.buscar(pautaId);
         return new TelaFormulario("Votar",
                 List.of(Campo.texto(pauta.getTitulo()),
-                        Campo.inputTexto("associadoId", "Identificação do associado", "")),
+                        Campo.inputTexto("associadoId", "CPF do associado", "")),
                 new Botao("Continuar", urls.opcoesVoto(pautaId)),
                 new Botao("Cancelar", urls.pauta(pautaId)));
     }
