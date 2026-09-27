@@ -1,0 +1,1 @@
+CREATE INDEX idx_voto_pauta_opcao ON voto (pauta_id, opcao);
