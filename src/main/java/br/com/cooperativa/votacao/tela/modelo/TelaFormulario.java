@@ -10,4 +10,9 @@ public record TelaFormulario(String tipo, String titulo, List<Campo> itens,
     public TelaFormulario(String titulo, List<Campo> itens, Botao botaoOk, Botao botaoCancelar) {
         this("FORMULARIO", titulo, itens, botaoOk, botaoCancelar);
     }
+
+    public static TelaFormulario erro(String mensagem, String urlInicio) {
+        return new TelaFormulario("Atenção", List.of(Campo.texto(mensagem)),
+                new Botao("Início", urlInicio), null);
+    }
 }

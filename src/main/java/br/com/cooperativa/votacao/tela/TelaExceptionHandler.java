@@ -5,8 +5,10 @@ import br.com.cooperativa.votacao.comum.excecao.IntegracaoIndisponivelException;
 import br.com.cooperativa.votacao.comum.excecao.RecursoNaoEncontradoException;
 import br.com.cooperativa.votacao.comum.excecao.RegraNegocioException;
 import br.com.cooperativa.votacao.tela.modelo.Tela;
+import br.com.cooperativa.votacao.tela.modelo.TelaFormulario;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.Ordered;
 import org.springframework.core.annotation.Order;
 import org.springframework.http.HttpStatus;
@@ -24,10 +26,10 @@ public class TelaExceptionHandler {
 
     private static final Logger log = LoggerFactory.getLogger(TelaExceptionHandler.class);
 
-    private final TelaService telaService;
+    private final String urlInicio;
 
-    public TelaExceptionHandler(TelaService telaService) {
-        this.telaService = telaService;
+    public TelaExceptionHandler(@Value("${app.base-url}") String baseUrl) {
+        this.urlInicio = new TelaUrls(baseUrl).inicio();
     }
 
     @ExceptionHandler(RecursoNaoEncontradoException.class)
@@ -81,6 +83,6 @@ public class TelaExceptionHandler {
     }
 
     private ResponseEntity<Tela> resposta(HttpStatus status, String mensagem) {
-        return ResponseEntity.status(status).body(telaService.erro(mensagem));
+        return ResponseEntity.status(status).body(TelaFormulario.erro(mensagem, urlInicio));
     }
 }
