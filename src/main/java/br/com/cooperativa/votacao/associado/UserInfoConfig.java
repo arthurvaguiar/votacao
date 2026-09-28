@@ -8,7 +8,7 @@ import org.springframework.http.client.SimpleClientHttpRequestFactory;
 import org.springframework.web.client.RestClient;
 
 @Configuration
-@ConditionalOnProperty(prefix = "app.user-info", name = "enabled", havingValue = "true")
+@ConditionalOnProperty(prefix = "app.user-info", name = "modo", havingValue = "http")
 public class UserInfoConfig {
 
     @Bean

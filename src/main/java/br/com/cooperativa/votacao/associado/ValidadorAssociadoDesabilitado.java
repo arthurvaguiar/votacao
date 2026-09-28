@@ -4,7 +4,7 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.stereotype.Component;
 
 @Component
-@ConditionalOnProperty(prefix = "app.user-info", name = "enabled", havingValue = "false", matchIfMissing = true)
+@ConditionalOnProperty(prefix = "app.user-info", name = "modo", havingValue = "desabilitado")
 public class ValidadorAssociadoDesabilitado implements ValidadorAssociado {
 
     @Override

@@ -4,5 +4,5 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 import java.time.Duration;
 
 @ConfigurationProperties(prefix = "app.user-info")
-public record UserInfoProperties(boolean enabled, String url, Duration timeout) {
+public record UserInfoProperties(String url, Duration timeout, double chanceApto) {
 }

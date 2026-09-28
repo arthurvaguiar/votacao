@@ -22,6 +22,7 @@ server:
 app:
   base-url: ${APP_BASE_URL:http://localhost:8081}
   user-info:
-    enabled: ${USER_INFO_ENABLED:false}
+    modo: ${USER_INFO_MODO:fake}            # fake | http | desabilitado
     url: ${USER_INFO_URL:https://user-info.herokuapp.com}
     timeout: ${USER_INFO_TIMEOUT:3s}
+    chance-apto: ${USER_INFO_CHANCE_APTO:0.5}  # usado só no modo fake
